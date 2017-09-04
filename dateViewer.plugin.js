@@ -6,7 +6,7 @@ class dateViewer {
 	
 	start() {
 		BdApi.clearCSS("clock-stylesheet");
-		BdApi.injectCSS("clock-stylesheet", `#clock-container, #clock-text {box-sizing: border-box}
+		BdApi.injectCSS("clock-stylesheet", `#clock-container {box-sizing: border-box}
 		#clock-container {align-items: center; background: #2f3136; bottom: 0; display: flex; height: 95px; justify-content: center; position: absolute; text-align: center; width: 100%; z-index: 10}
 		#clock-container::after {background: #3b3d42; content: ""; height: 1px; position: absolute; top: 0; width: 200px}
 		#clock-days {bottom: 15px; position: absolute; text-transform: uppercase}
