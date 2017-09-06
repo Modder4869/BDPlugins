@@ -1,29 +1,22 @@
 //META{"name":"dateViewer"}*//
-//Inspired by Jiik's "Digital Clock" plugin
+//inspired by Jiik's "Digital Clock" plugin
 
 class dateViewer {
 	constructor() {};
 	
 	start() {
-		BdApi.clearCSS("clock-stylesheet");
-		BdApi.injectCSS("clock-stylesheet", `#clock-container {align-items: center; background: #2f3136; bottom: 0; box-sizing: border-box; display: flex; height: 95px; justify-content: center; position: absolute; text-align: center; width: 100%; z-index: 10}
-		#clock-container::after {background: #3b3d42; content: ""; height: 1px; position: absolute; top: 0; width: 200px}
-		#clock-days {bottom: 15px; position: absolute; text-transform: uppercase}
-		#clock-day {bottom: 20px; font-size: 14px; font-weight: bold; position: absolute; text-transform: uppercase}
-		#clock-text {font-size: 1em; font-weight: bold; margin-top: -25px}
-
+		BdApi.clearCSS("dv-stylesheet");
+		BdApi.injectCSS("dv-stylesheet", `#dv-container {align-items: center; background: #2f3136; bottom: 0; box-sizing: border-box; display: flex; height: 95px; justify-content: center; position: absolute; text-align: center; width: 100%; z-index: 10}
+		#dv-container::after {background: #3b3d42; content: ""; height: 1px; position: absolute; top: 0; width: 200px}
+		#dv-day {bottom: 20px; font-size: 14px; font-weight: bold; position: absolute; text-transform: uppercase}
+		#dv-display {font-size: 1em; font-weight: bold; margin-top: -25px}
 		.channel-members-wrap .scrollerWrap-2uBjct {height: calc(100% - 95px)}`);
 
 		var self = this;
 		var days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
 		//append elements
-		this.clock_container = $("<div/>", {id: "clock-container"});
-		$(".channel-members-wrap").append(this.clock_container);
-
-		this.clock_text = $("<div/>", {id: "clock-text"});
-		$("#clock-container").append(this.clock_text);
-		$("#clock-container").append($("<div/>", {id: "clock-day"}));
+		$(".channel-members-wrap").append($("<div/>", {id: "dv-container"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-day"})));
 
 		//functionality
 		this.check = function(n) {
@@ -38,9 +31,8 @@ class dateViewer {
 			if(h > 12) {h -= 12}
 			else if(h == 0) {h = 12}
 
-			$("#clock-day").html(days[now.getDay()]);
-
-			self.clock_text.html(`${[h, m, s].join(":")} ${session}<br><span style="font-size: 14px; opacity: .4">${[y, mt, d].join("-")}</span>`);
+			$("#dv-day").html(days[now.getDay()]);
+			$("#dv-display").html(`${[h, m, s].join(":")} ${session}<br><span style="font-size: 14px; opacity: .4">${[y, mt, d].join("-")}</span>`);
 		}
 
 		this.update();
@@ -48,9 +40,9 @@ class dateViewer {
 	};
 
 	stop() {
-		BdApi.clearCSS("clock-stylesheet");
+		BdApi.clearCSS("dv-stylesheet");
 		clearInterval(this.repeat);
-		this.clock_container.remove();
+		$("#dv-container").remove();
 	};
 
 	load() {};
@@ -63,7 +55,12 @@ class dateViewer {
 
 	observer(e) {};
 
-	getSettingsPanel() {return ""};
+	getSettingsPanel() {
+		return `<form style="color: #fff">
+			<input type="radio" name="system-type"> 12-hour<br>
+			<input type="radio" name="system-type"> 24-hour
+		</form>`;
+	};
 
 	getName() {
 		return "Date Viewer";
@@ -78,6 +75,6 @@ class dateViewer {
 	};
 
 	getAuthor() {
-		return "hammy"
+		return "hammy";
 	};
 };
