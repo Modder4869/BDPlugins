@@ -55,12 +55,7 @@ class dateViewer {
 
 	observer(e) {};
 
-	getSettingsPanel() {
-		return `<form style="color: #fff">
-			<input type="radio" name="system-type"> 12-hour<br>
-			<input type="radio" name="system-type"> 24-hour
-		</form>`;
-	};
+	getSettingsPanel() {return ""};
 
 	getName() {
 		return "Date Viewer";
