@@ -2,7 +2,7 @@
 **Version:** 0.1.0
 
 Implements a container on your right side, that contains
-* digital clock (12-hour system)
+* digital clock (12-hour system, will be changeable in the future)
 * current date and day of the week
 
 ### CSS
