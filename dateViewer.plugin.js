@@ -1,5 +1,5 @@
 //META{"name":"dateViewer"}*//
-//inspired by Jiik's "Digital Clock" plugin
+//inspired by Jiiks's "Digital Clock" plugin
 
 class dateViewer {
 	constructor() {};
