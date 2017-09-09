@@ -1,13 +1,4 @@
-## Date Viewer
-**Version:** 0.1.1
-
-Implements a container on top of the member list, that contains
-* digital clock (12-hour system, will be changeable in the future)
-* current date and day of the week
-
-### CSS
-``#dv-container`` applies to the Date Viewer container
- * default options: ``background: #2f3136; color: #fff`` for dark theme and ``background: #fff; color: #000`` for light theme
-
-### Preview
-![](http://i.imgur.com/NfkHoDI.png)
+## BD Plugins
+Set of plugins created for *Better Discord*.
+### Plugins
+* ![Date Viewer](https://github.com/hammy13/BDPlugins/tree/master/plugins/dateViewer) implements a digital clock with 12-hour system, that will be changeable in the future and current date & day of the week.
