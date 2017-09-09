@@ -63,11 +63,7 @@ class dateViewer {
 		var self = this;
 
 		//append elements
-		$(".channel-members-wrap").append($("<div/>", {id: "dv-container", class: "dv-flex"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-btn", class: "dv-flex"}), $("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}), $("<div/>", {class: "dv-flash dv-full"})));
-		$("#dv-settings-panel").html(this.settings_panel_markup);
-
-		if(bdPluginStorage.get(this.plugin_name, "system_type") == "12") {$("#dv-r1").prop("checked", true)}
-		else if(bdPluginStorage.get(this.plugin_name, "system_type") == "24") {$("#dv-r2").prop("checked", true)}
+		this.onSwitch();
 
 		//functionality
 		this.toggle_settings_panel = function() {
@@ -92,6 +88,38 @@ class dateViewer {
 				bdPluginStorage.set(self.plugin_name, "system_type", "24");
 			}
 		};
+
+		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggle_settings_panel);
+		$("#dv-r1").on(`change.${this.plugin_name}`, this.enable_12);
+		$("#dv-r2").on(`change.${this.plugin_name}`, this.enable_24);
+
+		this.interval = setInterval(this.update, 1000);
+	};
+
+	stop() {
+		BdApi.clearCSS(this.stylesheet_name);
+		clearInterval(this.interval);
+
+		$("#dv-btn").off(`click.${this.plugin_name}`, this.toggle_settings_panel);
+		$("#dv-r1").off(`change.${this.plugin_name}`, this.enable_12);
+		$("#dv-r2").off(`change.${this.plugin_name}`, this.enable_24);
+
+		$("#dv-container").remove();
+	};
+
+	load() {};
+
+	unload() {};
+
+	onMessage() {};
+
+	onSwitch() {
+		$("#dv-container").remove();
+		$(".channel-members-wrap").append($("<div/>", {id: "dv-container", class: "dv-flex"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-btn", class: "dv-flex"}), $("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}), $("<div/>", {class: "dv-flash dv-full"})));
+		$("#dv-settings-panel").html(this.settings_panel_markup);
+
+		if(bdPluginStorage.get(this.plugin_name, "system_type") == "12") {$("#dv-r1").prop("checked", true)}
+		else {$("#dv-r2").prop("checked", true)}
 
 		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggle_settings_panel);
 		$("#dv-r1").on(`change.${this.plugin_name}`, this.enable_12);
@@ -132,29 +160,17 @@ class dateViewer {
 		}
 
 		this.update();
-		this.interval = setInterval(this.update, 1000);
 	};
 
-	stop() {
-		BdApi.clearCSS(this.stylesheet_name);
-		clearInterval(this.interval);
+	observer({addedNodes, removedNodes}) {
+	    for(let node, i = 0; i < addedNodes.length; i++) {
+	    	if(addedNodes[i].classList && addedNodes[i].classList.contains("channel-members-wrap")) return this.onSwitch();
+	    }
 
-		$("#dv-btn").off(`click.${this.plugin_name}`, this.toggle_settings_panel);
-		$("#dv-r1").off(`change.${this.plugin_name}`, this.enable_12);
-		$("#dv-r2").off(`change.${this.plugin_name}`, this.enable_24);
-
-		$("#dv-container").remove();
+	    for(let node, i = 0; i < removedNodes.length; i++) {
+	    	if(removedNodes[i].id === "friends") return this.onSwitch();
+	    }
 	};
-
-	load() {};
-
-	unload() {};
-
-	onMessage() {};
-
-	onSwitch() {};
-
-	observer(e) {};
 
 	getSettingsPanel() {return ""};
 
@@ -167,7 +183,7 @@ class dateViewer {
 	};
 
 	getVersion() {
-		return "0.1.2";
+		return "0.1.3";
 	};
 
 	getAuthor() {
