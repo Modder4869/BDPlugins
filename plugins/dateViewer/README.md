@@ -1,4 +1,4 @@
-## Date Viewer
+## Date Viewer / ![Download](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
 **Version:** 0.1.1
 
 ### Features
