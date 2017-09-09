@@ -67,14 +67,7 @@ class dateViewer {
 
 		//functionality
 		this.toggle_settings_panel = function() {
-			var shown = false;
-			if(shown == false) {
-				shown = true;
-				$("#dv-settings-panel").fadeToggle(300);
-			} else {
-				shown = false;
-				$("#dv-settings-panel").fadeToggle(300);
-			}
+			$("#dv-settings-panel").fadeToggle(300);
 		};
 
 		this.enable_12 = function() {
