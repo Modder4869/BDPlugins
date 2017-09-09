@@ -1,9 +1,10 @@
 ## Date Viewer / ![Download](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
-**Version:** 0.1.1
+**Version:** 0.1.2
 
 ### Features
-* digital clock (12-hour system, will be changeable in the future)
+* digital clock (both 12-hour and 24-hour system)
 * current date and day of the week
+* compatible with dark & light theme and BD blue
 
 ### Preview
-![](http://i.imgur.com/NfkHoDI.png)
+![](https://i.imgur.com/EXzUs1X.png)
