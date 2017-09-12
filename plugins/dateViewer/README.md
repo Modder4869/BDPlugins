@@ -1,5 +1,7 @@
-## Date Viewer / ![Download](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
-**Version:** 0.1.3
+## Date Viewer
+**Version:** 0.1.4
+
+**Download:** ![source](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
 
 ### Features
 * digital clock (both 12-hour and 24-hour system)
