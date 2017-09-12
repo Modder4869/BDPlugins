@@ -12,9 +12,10 @@ class dateViewer {
 		#dv-container {background: #2f3136; bottom: 0; box-sizing: border-box; color: #fff; height: 95px; position: absolute; width: 100%; z-index: 10}
 		#dv-container::after {background: #3b3d42; content: ""; height: 1px; position: absolute; top: 0; width: 200px}
 		#dv-date {font-size: small; opacity: .4}
+		#dv-day {font-size: 14px}
 		#dv-display {font-size: 1em; line-height: 18px; text-align: center; text-transform: uppercase}
 		#dv-settings-panel {background: #2f3136; display: none}
-		.dv-flash {animation: fade-out 2s linear; background: #fff; display: none; z-index: 10}
+		.dv-flash {animation: dv-fade-out 2s linear; background: #fff; display: none; z-index: 10}
 		.dv-flex {align-items: center; display: flex; justify-content: center}
 		.dv-full {height: 100%; left: 0; position: absolute; top: 0; width: 100%}
 		.dv-panel {font-size: small; text-transform: uppercase}
@@ -38,8 +39,8 @@ class dateViewer {
 		.theme-light #dv-btn::after {border: 2px solid #7289da; box-shadow: -4px -4px 0 #7289da}
 		.theme-light #dv-btn:hover {background: rgba(24, 25, 28, .2)}
 
-		@-webkit-keyframes fade-out {from {opacity: 1} to {opacity: 0}}
-		@keyframes fade-out {from {opacity: 1} to {opacity: 0}}`;
+		@-webkit-keyframes dv-fade-out {from {opacity: 1} to {opacity: 0}}
+		@keyframes dv-fade-out {from {opacity: 1} to {opacity: 0}}`;
 
 		this.settings_panel_markup = `<div class="dv-flex dv-full dv-panel">
 			<div class="dv-options">
@@ -55,47 +56,74 @@ class dateViewer {
 			</div>
 		</div>`;
 	};
+
+	updateClock() {
+		this.pad = function(n) {
+			return n < 10 ? "0" + n : n;
+		};
+
+		this.day = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+		this.month = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+		let now = new Date(), h = this.pad(now.getHours()), m = this.pad(now.getMinutes()), s = this.pad(now.getSeconds()),
+		y = now.getFullYear(), mt = now.getMonth(), d = now.getDate(), session = h > 11 ? "PM" : "AM", end;
+
+		if(d % 10 == 1 && d != 11) {end = "st"}
+		else if(d % 10 == 2 && d != 12) {end = "nd"}
+		else if(d % 10 == 3 && d != 13) {end = "rd"}
+		else {end = "th"}
+
+		if(m == "00" && s == "00") {
+			$(".dv-flash").css("display", "block");
+			setTimeout(function() {
+				$(".dv-flash").css("display", "none")
+			}, 2000);
+		}
+
+		if($("#dv-r1").is(":checked")) {
+			if(h > 12) {h -= 12}
+			else if(h == 0) {h = 12}
+			h = h < 10 ? "0" + h : h;
+
+			$("#dv-display").html(`${[h, m, s].join(":")} <span id="dv-session">${session}</span><br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span id="dv-day">${this.day[now.getDay()]}</span>`);
+		} else if($("#dv-r2").is(":checked")) {
+			h = h < 10 ? "0" + h : h;
+			$("#dv-display").html(`${[h, m, s].join(":")}<br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span id="dv-day">${this.day[now.getDay()]}</span>`);
+		}
+	};
+
+	toggleSettingsPanel() {
+		$("#dv-settings-panel").fadeToggle(300);
+	};
+
+	enableEvents() {
+		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggleSettingsPanel);
+		$("#dv-r1").on(`change.${this.plugin_name}`, this.setSystem12);
+		$("#dv-r2").on(`change.${this.plugin_name}`, this.setSystem24);
+	};
+
+	disableEvents() {
+		$("#dv-btn").off(`click.${this.plugin_name}`, this.toggleSettingsPanel);
+		$("#dv-r1").off(`change.${this.plugin_name}`, this.setSystem12);
+		$("#dv-r2").off(`change.${this.plugin_name}`, this.setSystem24);
+	};
 	
 	start() {
 		BdApi.clearCSS(this.stylesheet_name);
 		BdApi.injectCSS(this.stylesheet_name, this.stylesheet);
 
 		var self = this;
+		this.setSystem12 = function() {if(this.checked) {bdPluginStorage.set(self.plugin_name, "system_type", 12); self.updateClock()}}
+		this.setSystem24 = function() {if(this.checked) {bdPluginStorage.set(self.plugin_name, "system_type", 24); self.updateClock()}}
 
-		//append elements
+		this.enableEvents();
 		this.onSwitch();
-
-		//functionality
-		this.toggle_settings_panel = function() {
-			$("#dv-settings-panel").fadeToggle(300);
-		};
-
-		this.enable_12 = function() {
-			if(this.checked) {
-				bdPluginStorage.set(self.plugin_name, "system_type", "12");
-			}
-		};
-
-		this.enable_24 = function() {
-			if(this.checked) {
-				bdPluginStorage.set(self.plugin_name, "system_type", "24");
-			}
-		};
-
-		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggle_settings_panel);
-		$("#dv-r1").on(`change.${this.plugin_name}`, this.enable_12);
-		$("#dv-r2").on(`change.${this.plugin_name}`, this.enable_24);
-
-		this.interval = setInterval(this.update, 1000);
 	};
 
 	stop() {
 		BdApi.clearCSS(this.stylesheet_name);
 		clearInterval(this.interval);
-
-		$("#dv-btn").off(`click.${this.plugin_name}`, this.toggle_settings_panel);
-		$("#dv-r1").off(`change.${this.plugin_name}`, this.enable_12);
-		$("#dv-r2").off(`change.${this.plugin_name}`, this.enable_24);
+		this.disableEvents();
 
 		$("#dv-container").remove();
 	};
@@ -107,52 +135,16 @@ class dateViewer {
 	onMessage() {};
 
 	onSwitch() {
-		$("#dv-container").remove();
-		$(".channel-members-wrap").append($("<div/>", {id: "dv-container", class: "dv-flex"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-btn", class: "dv-flex"}), $("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}), $("<div/>", {class: "dv-flash dv-full"})));
-		$("#dv-settings-panel").html(this.settings_panel_markup);
+		if($("#dv-container").length) return;
+		$(".channel-members-wrap").append($("<div/>", {id: "dv-container", class: "dv-flex"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-btn", class: "dv-flex"}), $("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}).html(this.settings_panel_markup), $("<div/>", {class: "dv-flash dv-full"})));
 
-		if(bdPluginStorage.get(this.plugin_name, "system_type") == "12") {$("#dv-r1").prop("checked", true)}
-		else {$("#dv-r2").prop("checked", true)}
+		if(bdPluginStorage.get(this.plugin_name, "system_type") == 12) {$("#dv-r1").prop("checked", true)}
+		else if(bdPluginStorage.get(this.plugin_name, "system_type") == 24) {$("#dv-r2").prop("checked", true)}
 
-		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggle_settings_panel);
-		$("#dv-r1").on(`change.${this.plugin_name}`, this.enable_12);
-		$("#dv-r2").on(`change.${this.plugin_name}`, this.enable_24);
+		this.enableEvents();
+		this.updateClock();
 
-		this.update = function() {
-			this.day = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-			this.month = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-
-			this.pad = function(n) {
-				return n < 10 ? "0" + n : n;
-			};
-
-			let now = new Date(), h = now.getHours(), m = this.pad(now.getMinutes()), s = this.pad(now.getSeconds()), y = now.getFullYear(), mt = now.getMonth(), d = now.getDate(), session = h > 11 ? "PM" : "AM", end;
-
-			if(d % 10 == 1 && d != 11) {end = "st"}
-			else if(d % 10 == 2 && d != 12) {end = "nd"}
-			else if(d % 10 == 3 && d != 13) {end = "rd"}
-			else {end = "th"}
-
-			if(m == "00" && s == "00") {
-				$(".dv-flash").css("display", "block");
-				setTimeout(function() {
-					$(".dv-flash").css("display", "none")
-				}, 2000);
-			}
-
-			if($("#dv-r1").is(":checked")) {
-				if(h > 12) {h -= 12}
-				else if(h == 0) {h = 12}
-				h = h < 10 ? "0" + h : h;
-
-				$("#dv-display").html(`${[h, m, s].join(":")} ${session}<br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span style="font-size: 14px">${this.day[now.getDay()]}</span>`);
-			} else if($("#dv-r2").is(":checked")) {
-				h = h < 10 ? "0" + h : h;
-				$("#dv-display").html(`${[h, m, s].join(":")}<br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span style="font-size: 14px">${this.day[now.getDay()]}</span>`);
-			}
-		}
-
-		this.update();
+		this.interval = setInterval(this.updateClock, 1000);
 	};
 
 	observer({addedNodes, removedNodes}) {
@@ -167,19 +159,11 @@ class dateViewer {
 
 	getSettingsPanel() {return ""};
 
-	getName() {
-		return "Date Viewer";
-	};
+	getName() {return "Date Viewer"};
 
-	getDescription() {
-		return "Implements a container on top of the member list, that features digital clock (both 12-hour and 24-hour system), current date and day of the week..."
-	};
+	getDescription() {return "Implements a container on top of the member list, that features digital clock (both 12-hour and 24-hour system), current date and day of the week."};
 
-	getVersion() {
-		return "0.1.3";
-	};
+	getVersion() {return "0.1.4"};
 
-	getAuthor() {
-		return "hammy";
-	};
+	getAuthor() {return "hammy"};
 };
