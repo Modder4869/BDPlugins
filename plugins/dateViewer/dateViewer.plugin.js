@@ -6,19 +6,21 @@ class dateViewer {
 		this.plugin_name = "dateViewer";
 		this.stylesheet_name = "dv-stylesheet";
 
-		this.stylesheet = `#dv-btn {background: transparent; border-radius: 4px; cursor: pointer; height: 28px; position: absolute; right: 25px; top: -33px; width: 28px}
-		#dv-btn::after {background: transparent; border: 2px solid #fff; bottom: 7px; box-shadow: -4px -4px 0 #fff; box-sizing: border-box; content: ""; height: 10px; opacity: .6; position: absolute; right: 7px; width: 10px}
-		#dv-btn:hover {background: rgba(24, 25, 28, .3)} #dv-btn:hover::after {opacity: 1}
+		this.stylesheet = `#dv-btn-settings-panel svg path {height: 18px; width: 18px; display: block}
 		#dv-container {background: #2f3136; bottom: 0; box-sizing: border-box; color: #fff; height: 95px; position: absolute; width: 100%; z-index: 10}
 		#dv-container::after {background: #3b3d42; content: ""; height: 1px; position: absolute; top: 0; width: 200px}
 		#dv-date {font-size: small; opacity: .4}
 		#dv-day {font-size: 14px}
 		#dv-display {font-size: 1em; line-height: 18px; text-align: center; text-transform: uppercase}
 		#dv-settings-panel {background: #2f3136; display: none}
+		.dv-btn {border-radius: 4px; bottom: calc(100% + 5px); cursor: pointer; height: 32px; opacity: .6; position: absolute; right: 25px; width: 32px}
+		.dv-btn:hover, .dv-btn.dv-active {background: rgba(24, 25, 28, .3); opacity: 1}
 		.dv-flash {animation: dv-fade-out 2s linear; background: #fff; display: none; z-index: 10}
 		.dv-flex {align-items: center; display: flex; justify-content: center}
 		.dv-full {height: 100%; left: 0; position: absolute; top: 0; width: 100%}
-		.dv-panel {font-size: small; text-transform: uppercase}
+		.dv-hide {display: none}
+		.dv-icon {display: block; fill: #fff; height: 18px; width: 18px}
+		.dv-panel {display: flex; -webkit-flex-direction: row; flex-direction: row; font-size: small; text-transform: uppercase}
 		.dv-panel input[type="radio"] {display: none}
 		.dv-panel input[type="radio"] + label {cursor: pointer}
 		.dv-panel input[type="radio"] + label span {background: #99aab5; border-radius: 50%; cursor: pointer; display: inline-block; height: 16px; margin: 0 5px 0 0; position: relative; transition: .15s; vertical-align: -4px; width: 16px}
@@ -26,31 +28,36 @@ class dateViewer {
 		.dv-panel input[type="radio"]:checked + label span {background: #7289da}
 		.dv-panel .dv-option {font-size: 12px}
 		.dv-panel .dv-option:not(:last-child) {margin-bottom: 5px}
+		.dv-panel .dv-options {width: 80px}
+		.dv-panel .dv-options:not(:first-child) {margin-left: 20px}
 		.dv-panel .dv-title {border-bottom: 1px solid #3b3d42; color: #87909c; font-size: 12px; font-weight: bold; margin-bottom: 5px; padding-bottom: 3px}
+		.dv-show {display: block}
 
+		.bd-blue .theme-light .dv-icon {fill: #3a71c1}
 		.bd-blue .dv-panel input[type="radio"]:checked + label span {background: #3a71c1}
-		.bd-blue .theme-light #dv-btn::after {border: 2px solid #3a71c1; box-shadow: -4px -4px 0 #3a71c1}
 		.bd-blue .theme-light .dv-panel .dv-title {color: #3a71c1}
+		.bd-blue .tooltip-bottom-right.tooltip-black::after {border-top-color: #3a71c1}
 		.channel-members-wrap .scrollerWrap-2uBjct {height: calc(100% - 95px)}
 		.theme-light #dv-container, .theme-light #dv-settings-panel {background: #fff; color: #000}
 		.theme-light #dv-container::after {background: rgba(0, 0, 0, .1)}
 		.theme-light #dv-date {opacity: .6}
+		.theme-light .dv-btn:hover, .theme-light .dv-btn.dv-active {background-color: rgba(24, 25, 28, .15)}
 		.theme-light .dv-panel .dv-title {border-bottom: 1px solid rgba(0, 0, 0, .1); color: #7289da}
-		.theme-light #dv-btn::after {border: 2px solid #7289da; box-shadow: -4px -4px 0 #7289da}
-		.theme-light #dv-btn:hover {background: rgba(24, 25, 28, .2)}
+		.theme-light .dv-icon {fill: #7289da}
+		.tooltip-top-right::after {border-top-color: #000; position: absolute; right: 10px; top: 100%}
 
-		@-webkit-keyframes dv-fade-out {from {opacity: 1} to {opacity: 0}}
-		@keyframes dv-fade-out {from {opacity: 1} to {opacity: 0}}`;
+		@keyframes dv-fade-out {from {opacity: 1} to {opacity: 0}}
+		@keyframes dv-modal {from {opacity: 0; transform: scale(.75)} to {opacity: 1; transform: scale(1)}}`;
 
 		this.settings_panel_markup = `<div class="dv-flex dv-full dv-panel">
 			<div class="dv-options">
 				<h3 class="dv-title">system type</h3>
 				<div class="dv-option">
-					<input type="radio" id="dv-r1" name="system-type">
+					<input type="radio" id="dv-r1" name="dv-system-type">
 					<label for="dv-r1"><span></span>12-hour</label>
 				</div>
 				<div class="dv-option">
-					<input type="radio" id="dv-r2" name="system-type">
+					<input type="radio" id="dv-r2" name="dv-system-type">
 					<label for="dv-r2"><span></span>24-hour</label>
 				</div>
 			</div>
@@ -59,7 +66,7 @@ class dateViewer {
 
 	updateClock() {
 		this.pad = function(n) {
-			return n < 10 ? "0" + n : n;
+			return n < 10 ? `0${n}` : n;
 		};
 
 		this.day = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -74,48 +81,76 @@ class dateViewer {
 		else {end = "th"}
 
 		if(m == "00" && s == "00") {
-			$(".dv-flash").css("display", "block");
+			$(".dv-flash").addClass("dv-show");
 			setTimeout(function() {
-				$(".dv-flash").css("display", "none")
+				$(".dv-flash").removeClass("dv-show");
 			}, 2000);
 		}
 
 		if($("#dv-r1").is(":checked")) {
 			if(h > 12) {h -= 12}
 			else if(h == 0) {h = 12}
-			h = h < 10 ? "0" + h : h;
-
-			$("#dv-display").html(`${[h, m, s].join(":")} <span id="dv-session">${session}</span><br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span id="dv-day">${this.day[now.getDay()]}</span>`);
+			h = h < 10 ? `0${h}` : h;
+			$("#dv-display").html(`${[h, m, s].join(":")}<span id="dv-session"> ${session}</span><span id="dv-date"><br>${[d, end].join("")} of ${this.month[mt]}, ${y}</span><span id="dv-day"><br>${this.day[now.getDay()]}</span>`);
 		} else if($("#dv-r2").is(":checked")) {
-			h = h < 10 ? "0" + h : h;
-			$("#dv-display").html(`${[h, m, s].join(":")}<br><span id="dv-date">${[d, end].join("")} of ${this.month[mt]}, ${y}</span><br><span id="dv-day">${this.day[now.getDay()]}</span>`);
+			$("#dv-display").html(`${[h, m, s].join(":")}<span id="dv-date"><br>${[d, end].join("")} of ${this.month[mt]}, ${y}</span><span id="dv-day"><br>${this.day[now.getDay()]}</span>`);
 		}
+	};
+
+	appendElements() {
+		$(".channel-members-wrap")
+		.append($("<div/>", {id: "dv-container", class: "dv-flex"})
+			.append($("<div/>", {id: "dv-display"}),
+					$("<div/>", {id: "dv-btn-settings-panel", class: "dv-btn dv-flex"}),
+					$("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}).html(this.settings_panel_markup),
+					$("<div/>", {class: "dv-flash dv-full"})));
+		$(".container-iksrDt .button-1aU9q1:last-child svg").clone().attr("class", "dv-icon").appendTo("#dv-btn-settings-panel");
+	};
+
+	setTooltip(selector, type, value) {
+		let offset = 8, total = 15;
+		$(selector).mouseenter(function() {
+			let offsetX = $(window).width() - $(selector).offset().left - $(selector).width() / 2 - total;
+			let offsetY = $(window).height() - $(selector).offset().top + offset;
+			$(".tooltips").append($("<div/>", {class: "tooltip tooltip-top-right tooltip-black"}).html(value));
+			$(".tooltip-top-right").css({"bottom": offsetY, "right": offsetX});
+		});
+
+		$(selector).mouseleave(function() {
+			$(".tooltips").empty();
+		});
+	};
+
+	setKey(selector, key, value) {
+		if($(selector).is(":checked")) {bdPluginStorage.set(this.plugin_name, key, value)}
+		this.updateClock();
+	};
+
+	propKey(selector1, selector2, value1, value2, key) {
+		if(bdPluginStorage.get(this.plugin_name, key) == value1) {$(selector1).prop("checked", true)}
+		else if(bdPluginStorage.get(this.plugin_name, key) == value2) {$(selector2).prop("checked", true)}
+	};
+
+	enableEvents() {
+		$("#dv-btn-settings-panel").on(`click.${this.plugin_name}`, this.toggleSettingsPanel);
+		$("#dv-r1").on(`change.${this.plugin_name}`, x => this.setKey("#dv-r1", "system_type", 12));
+		$("#dv-r2").on(`change.${this.plugin_name}`, x => this.setKey("#dv-r2", "system_type", 24));
+		this.setTooltip("#dv-btn-settings-panel", "br", "Settings");
+	};
+
+	disableEvents() {
+		$("#dv-btn-settings-panel").off(`click.${this.plugin_name}`, this.toggleSettingsPanel);
+		$("#dv-r1", "#dv-r2").off(`change.${this.plugin_name}`, this.setKey);
 	};
 
 	toggleSettingsPanel() {
 		$("#dv-settings-panel").fadeToggle(300);
-	};
-
-	enableEvents() {
-		$("#dv-btn").on(`click.${this.plugin_name}`, this.toggleSettingsPanel);
-		$("#dv-r1").on(`change.${this.plugin_name}`, this.setSystem12);
-		$("#dv-r2").on(`change.${this.plugin_name}`, this.setSystem24);
-	};
-
-	disableEvents() {
-		$("#dv-btn").off(`click.${this.plugin_name}`, this.toggleSettingsPanel);
-		$("#dv-r1").off(`change.${this.plugin_name}`, this.setSystem12);
-		$("#dv-r2").off(`change.${this.plugin_name}`, this.setSystem24);
+		$("#dv-btn-settings-panel").toggleClass("dv-active");
 	};
 	
 	start() {
 		BdApi.clearCSS(this.stylesheet_name);
 		BdApi.injectCSS(this.stylesheet_name, this.stylesheet);
-
-		var self = this;
-		this.setSystem12 = function() {if(this.checked) {bdPluginStorage.set(self.plugin_name, "system_type", 12); self.updateClock()}}
-		this.setSystem24 = function() {if(this.checked) {bdPluginStorage.set(self.plugin_name, "system_type", 24); self.updateClock()}}
-
 		this.enableEvents();
 		this.onSwitch();
 	};
@@ -136,11 +171,9 @@ class dateViewer {
 
 	onSwitch() {
 		if($("#dv-container").length) return;
-		$(".channel-members-wrap").append($("<div/>", {id: "dv-container", class: "dv-flex"}).append($("<div/>", {id: "dv-display"}), $("<div/>", {id: "dv-btn", class: "dv-flex"}), $("<div/>", {id: "dv-settings-panel", class: "dv-flex dv-full"}).html(this.settings_panel_markup), $("<div/>", {class: "dv-flash dv-full"})));
+		this.appendElements();
 
-		if(bdPluginStorage.get(this.plugin_name, "system_type") == 12) {$("#dv-r1").prop("checked", true)}
-		else if(bdPluginStorage.get(this.plugin_name, "system_type") == 24) {$("#dv-r2").prop("checked", true)}
-
+		this.propKey("#dv-r1", "#dv-r2", 12, 24, "system_type");
 		this.enableEvents();
 		this.updateClock();
 
@@ -163,7 +196,7 @@ class dateViewer {
 
 	getDescription() {return "Implements a container on top of the member list, that features digital clock (both 12-hour and 24-hour system), current date and day of the week."};
 
-	getVersion() {return "0.1.4"};
+	getVersion() {return "0.1.5"};
 
 	getAuthor() {return "hammy"};
 };
