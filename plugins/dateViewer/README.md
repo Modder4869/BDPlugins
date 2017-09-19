@@ -1,5 +1,5 @@
 ## Date Viewer
-**Version:** 0.1.4
+**Version:** 0.1.5
 
 **Download:** ![Source](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
 
