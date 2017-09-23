@@ -61,17 +61,6 @@ class dateViewer {
 					<label for="dv-r2"><span></span>24-hour</label>
 				</div>
 			</div>
-			<div class="dv-options">
-				<h3 class="dv-title">position</h3>
-				<div class="dv-option">
-					<input type="radio" id="dv-r3" name="dv-position">
-					<label for="dv-r3"><span></span>bottom</label>
-				</div>
-				<div class="dv-option">
-					<input type="radio" id="dv-r4" name="dv-position">
-					<label for="dv-r4"><span></span>top</label>
-				</div>
-			</div>
 		</div>`;
 	};
 
