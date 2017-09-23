@@ -37,7 +37,7 @@ class dateViewer {
 		.bd-blue .dv-panel input[type="radio"]:checked + label span {background: #3a71c1}
 		.bd-blue .theme-light .dv-panel .dv-title {color: #3a71c1}
 		.bd-blue .tooltip-bottom-right.tooltip-black::after {border-top-color: #3a71c1}
-		.channel-members-wrap .scrollerWrap-2uBjct {height: calc(100% - 95px)}
+		.channel-members-wrap .channel-members {height: calc(100% - 95px)}
 		.theme-light #dv-container, .theme-light #dv-settings-panel {background: #fff; color: #000}
 		.theme-light #dv-container::after {background: rgba(0, 0, 0, .1)}
 		.theme-light #dv-date {opacity: .6}
@@ -59,6 +59,17 @@ class dateViewer {
 				<div class="dv-option">
 					<input type="radio" id="dv-r2" name="dv-system-type">
 					<label for="dv-r2"><span></span>24-hour</label>
+				</div>
+			</div>
+			<div class="dv-options">
+				<h3 class="dv-title">position</h3>
+				<div class="dv-option">
+					<input type="radio" id="dv-r3" name="dv-position">
+					<label for="dv-r3"><span></span>bottom</label>
+				</div>
+				<div class="dv-option">
+					<input type="radio" id="dv-r4" name="dv-position">
+					<label for="dv-r4"><span></span>top</label>
 				</div>
 			</div>
 		</div>`;
@@ -107,7 +118,7 @@ class dateViewer {
 		$(".container-iksrDt .button-1aU9q1:last-child svg").clone().attr("class", "dv-icon").appendTo("#dv-btn-settings-panel");
 	};
 
-	setTooltip(selector, type, value) {
+	setTooltip(selector, value) {
 		let offset = 8, total = 15;
 		$(selector).mouseenter(function() {
 			let offsetX = $(window).width() - $(selector).offset().left - $(selector).width() / 2 - total;
@@ -135,7 +146,7 @@ class dateViewer {
 		$("#dv-btn-settings-panel").on(`click.${this.plugin_name}`, this.toggleSettingsPanel);
 		$("#dv-r1").on(`change.${this.plugin_name}`, x => this.setKey("#dv-r1", "system_type", 12));
 		$("#dv-r2").on(`change.${this.plugin_name}`, x => this.setKey("#dv-r2", "system_type", 24));
-		this.setTooltip("#dv-btn-settings-panel", "br", "Settings");
+		this.setTooltip("#dv-btn-settings-panel", "Settings");
 	};
 
 	disableEvents() {
