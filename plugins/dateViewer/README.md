@@ -1,12 +1,13 @@
 ## Date Viewer
-**Version:** 0.1.5
+Displays current time, date and day of the week on the right side. The way how it's displayed depends on your locale conventions.
+
+**Version:** 0.2.0
 
 **Download:** ![Source](https://github.com/hammy13/BDPlugins/blob/master/plugins/dateViewer/dateViewer.plugin.js)
 
 ### Features
-* digital clock (both 12-hour and 24-hour system)
-* current date and day of the week
-* compatible with dark & light theme and BD blue
+* displaying current time, date and day of the week
+* compatible with dark and light theme types
 
 ### Preview
-![](https://i.imgur.com/EXzUs1X.png)
+![](https://i.imgur.com/2G3joqr.png)
