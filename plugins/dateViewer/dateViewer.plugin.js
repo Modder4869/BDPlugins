@@ -44,7 +44,7 @@ class dateViewer {
                 color: #737f8d;
             }
 
-            .channel-members-wrap .channel-members {
+            .membersWrap-3wRngy .members-1bid1J {
                 height: calc(100% - 95px);
             }
         `;
@@ -78,7 +78,7 @@ class dateViewer {
     }
 
     append() {
-        document.querySelector(".channel-members-wrap").appendChild(this.mount);
+        document.querySelector(".membersWrap-3wRngy").appendChild(this.mount);
     }
 
     start() {
@@ -98,7 +98,7 @@ class dateViewer {
     }
 
     onSwitch() {
-        if(document.querySelector(".channel-members-wrap")) {
+        if(document.querySelector(".membersWrap-3wRngy")) {
             if(document.contains(this.mount))
                 return;
 
@@ -112,7 +112,7 @@ class dateViewer {
 
     observer({addedNodes}) {
         for(let node, i = 0; i < addedNodes.length; i++) {
-            if(addedNodes[i].classList && addedNodes[i].classList.contains("channel-members-wrap"))
+            if(addedNodes[i].classList && addedNodes[i].classList.contains("membersWrap-3wRngy"))
                 return this.onSwitch();
         }
     }
